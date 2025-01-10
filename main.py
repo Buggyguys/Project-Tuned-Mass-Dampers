@@ -6,19 +6,14 @@ import os
 
 class TunedMassDamperAnalysis:
     def __init__(self, m1=1.0, m2=0.05, k1=1.0, b=0.1):
-        """
-        Initialize the tuned mass damper system with default parameters
-        matching the John Hancock Tower case study.
-        """
+        #initialize with default parameters matching the case 
         self.m1 = m1  # Building mass
         self.m2 = m2  # Damper mass
         self.k1 = k1  # Building spring constant
         self.b = b    # Damping coefficient
 
     def system_equations(self, state, t, k2):
-        """
-        System of first-order differential equations.
-        """
+        #system of first-order differential eq.
         x1, x2, p1, p2 = state
 
         dx1dt = p1 / self.m1
@@ -29,9 +24,6 @@ class TunedMassDamperAnalysis:
         return [dx1dt, dx2dt, dp1dt, dp2dt]
 
     def calculate_energy(self, state, k2):
-        """
-        Calculate system energies.
-        """
         x1, x2, p1, p2 = state
 
         T1 = p1 ** 2 / (2 * self.m1)
@@ -42,26 +34,17 @@ class TunedMassDamperAnalysis:
         return T1 + T2, V1 + V2, T1 + T2 + V1 + V2
 
     def simulate(self, k2, t_span, initial_conditions):
-        """
-        Simulate the system dynamics.
-        """
+        #simulate system dynamics
         solution = odeint(self.system_equations, initial_conditions, t_span, args=(k2,))
         energies = np.array([self.calculate_energy(state, k2) for state in solution])
         return solution, energies
 
     def save_plot(self, save_path, filename):
-        """
-        Helper method to safely save plots to the specified directory.
-        Creates the directory if it doesn't exist.
-        """
         if save_path:
             os.makedirs(save_path, exist_ok=True)
             plt.savefig(os.path.join(save_path, filename))
 
     def generate_all_plots(self, save_path=None):
-        """
-        Generate and optionally save all analysis plots.
-        """
         print("Generating analysis plots...")
         
         # Simulation parameters
